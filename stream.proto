@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+service VideoStream {
+  rpc ImgStreaming(MsgRequest) returns (Empty) {}
+  rpc ImgGetting(Identity) returns (MsgReply) {}
+  rpc Register(Identity) returns (Empty) {}
+  rpc CheckList(Empty) returns (Identity) {}
+}
+
+message Empty{}
+message Identity{
+  string name = 1;
+}
+message MsgRequest {
+  bytes img = 1;
+  string name = 2;
+}
+
+message MsgReply {
+  bytes img = 1;
+  string name = 2;
+}
