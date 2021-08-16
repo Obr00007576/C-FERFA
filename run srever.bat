@@ -1,3 +1,3 @@
 @echo off
-python server.py
-pause
+start python stream_server.py &
+start python chat_server.py &
