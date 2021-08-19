@@ -8,7 +8,6 @@ import network_pb2_grpc
 import skvideo
 skvideo.setFFmpegPath("./ffmpeg-N-103130-g7ab0207d4b-win64-gpl/bin")
 import skvideo.io
-default_image=None
 user_list=[]
 streaming_dic={}
 class VideoStreamServicer(network_pb2_grpc.VideoStreamServicer):
@@ -21,7 +20,7 @@ class VideoStreamServicer(network_pb2_grpc.VideoStreamServicer):
         context.add_callback(leave)
         print("user[{}] connected\n".format(name))
         if name not in user_list:
-            streaming_dic[name]=None
+            streaming_dic[name]=bytes("","utf-8")
             user_list.append(name)
         while(True):
             time.sleep(0.5)
@@ -31,12 +30,9 @@ class VideoStreamServicer(network_pb2_grpc.VideoStreamServicer):
     def ImgGetting(self, request, context):
         name=request.name
         if not name in streaming_dic.keys():
-            return network_pb2.MsgReply(img=default_image,name=name)
+            return network_pb2.MsgReply(img=bytes("","utf-8"),name=name)
         img=streaming_dic[request.name]
-        if img!=None:
-            return network_pb2.MsgReply(img=img,name=name)
-        else:
-            return network_pb2.MsgReply(img=default_image,name=name)
+        return network_pb2.MsgReply(img=img,name=name)
     def CheckList(self, request, context):
         """index=0
         if index<len(user_list):
@@ -54,10 +50,6 @@ class VideoStreamServicer(network_pb2_grpc.VideoStreamServicer):
         return network_pb2.Identity(name=name_list)
 
 def serve():
-    global default_image
-    default_image = cv2.imread('./default.png', 0)
-    default_image = cv2.cvtColor(default_image, cv2.IMREAD_COLOR )
-    default_image = cv2.imencode(".jpg", default_image)[1].tobytes()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     network_pb2_grpc.add_VideoStreamServicer_to_server(VideoStreamServicer(), server)
     server.add_insecure_port('[::]:50050')

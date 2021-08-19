@@ -1,8 +1,6 @@
 import grpc
 import cv2
 from numpy.core.numeric import True_
-import stream_pb2
-import stream_pb2_grpc
 import numpy as np
 import threading
 import sys

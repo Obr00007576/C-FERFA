@@ -27,6 +27,6 @@ def serve():
     print("Chat server is running now!\n")
     server.start()
     while True:
-        time.sleep(64 * 64 * 100)
+        time.sleep(1000)
 if __name__=='__main__':
     serve()
