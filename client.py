@@ -1,4 +1,3 @@
-from textwrap import fill
 from tkinter import *
 from chat_client import ChatClient
 from stream_client import StreamClient

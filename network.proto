@@ -1,37 +1,43 @@
 syntax = "proto3";
 
-service VideoStream {
+service VideoStream 
+{
   rpc ImgStreaming(MsgRequest) returns (Empty) {}
   rpc ImgGetting(Identity) returns (MsgReply) {}
   rpc Register(Identity) returns (Empty) {}
   rpc CheckList(Empty) returns (Identity) {}
 }
-
 message Empty{}
-message Identity{
+message Identity
+{
   string name = 1;
 }
-message MsgRequest {
-  bytes img = 1;
+message MsgRequest 
+{
+  bytes data = 1;
   string name = 2;
 }
-
-message MsgReply {
-  bytes img = 1;
+message MsgReply 
+{
+  bytes data = 1;
   string name = 2;
 }
-
 service ChatServer 
 {
-    rpc ChatStream (Empty) returns (stream Note);
-    rpc SendNote (Note) returns (Empty);
+  rpc ChatStream (Empty) returns (stream Note);
+  rpc SendNote (Note) returns (Empty);
 }
 message Note 
 { 
-    string name = 1; 
-    string message = 2;
+  string name = 1; 
+  string message = 2;
 }
 message Img
 {
-    string img = 1;
+  string img = 1;
+}
+service AudioStream
+{
+  rpc ChunkStreaming(MsgRequest) returns (Empty) {}
+  rpc ChunkGetting(Identity) returns (MsgReply) {}
 }

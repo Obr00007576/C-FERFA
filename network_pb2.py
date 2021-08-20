@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\rnetwork.proto\"\x07\n\x05\x45mpty\"\x18\n\x08Identity\x12\x0c\n\x04name\x18\x01 \x01(\t\"\'\n\nMsgRequest\x12\x0b\n\x03img\x18\x01 \x01(\x0c\x12\x0c\n\x04name\x18\x02 \x01(\t\"%\n\x08MsgReply\x12\x0b\n\x03img\x18\x01 \x01(\x0c\x12\x0c\n\x04name\x18\x02 \x01(\t\"%\n\x04Note\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x12\n\x03Img\x12\x0b\n\x03img\x18\x01 \x01(\t2\x9d\x01\n\x0bVideoStream\x12%\n\x0cImgStreaming\x12\x0b.MsgRequest\x1a\x06.Empty\"\x00\x12$\n\nImgGetting\x12\t.Identity\x1a\t.MsgReply\"\x00\x12\x1f\n\x08Register\x12\t.Identity\x1a\x06.Empty\"\x00\x12 \n\tCheckList\x12\x06.Empty\x1a\t.Identity\"\x00\x32\x46\n\nChatServer\x12\x1d\n\nChatStream\x12\x06.Empty\x1a\x05.Note0\x01\x12\x19\n\x08SendNote\x12\x05.Note\x1a\x06.Emptyb\x06proto3'
+  serialized_pb=b'\n\rnetwork.proto\"\x07\n\x05\x45mpty\"\x18\n\x08Identity\x12\x0c\n\x04name\x18\x01 \x01(\t\"(\n\nMsgRequest\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\x12\x0c\n\x04name\x18\x02 \x01(\t\"&\n\x08MsgReply\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\x12\x0c\n\x04name\x18\x02 \x01(\t\"%\n\x04Note\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x12\n\x03Img\x12\x0b\n\x03img\x18\x01 \x01(\t2\x9d\x01\n\x0bVideoStream\x12%\n\x0cImgStreaming\x12\x0b.MsgRequest\x1a\x06.Empty\"\x00\x12$\n\nImgGetting\x12\t.Identity\x1a\t.MsgReply\"\x00\x12\x1f\n\x08Register\x12\t.Identity\x1a\x06.Empty\"\x00\x12 \n\tCheckList\x12\x06.Empty\x1a\t.Identity\"\x00\x32\x46\n\nChatServer\x12\x1d\n\nChatStream\x12\x06.Empty\x1a\x05.Note0\x01\x12\x19\n\x08SendNote\x12\x05.Note\x1a\x06.Empty2^\n\x0b\x41udioStream\x12\'\n\x0e\x43hunkStreaming\x12\x0b.MsgRequest\x1a\x06.Empty\"\x00\x12&\n\x0c\x43hunkGetting\x12\t.Identity\x1a\t.MsgReply\"\x00\x62\x06proto3'
 )
 
 
@@ -91,7 +91,7 @@ _MSGREQUEST = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='img', full_name='MsgRequest.img', index=0,
+      name='data', full_name='MsgRequest.data', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
@@ -117,7 +117,7 @@ _MSGREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=52,
-  serialized_end=91,
+  serialized_end=92,
 )
 
 
@@ -130,7 +130,7 @@ _MSGREPLY = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='img', full_name='MsgReply.img', index=0,
+      name='data', full_name='MsgReply.data', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
@@ -155,8 +155,8 @@ _MSGREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=93,
-  serialized_end=130,
+  serialized_start=94,
+  serialized_end=132,
 )
 
 
@@ -194,8 +194,8 @@ _NOTE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=132,
-  serialized_end=169,
+  serialized_start=134,
+  serialized_end=171,
 )
 
 
@@ -226,8 +226,8 @@ _IMG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=171,
-  serialized_end=189,
+  serialized_start=173,
+  serialized_end=191,
 )
 
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
@@ -289,8 +289,8 @@ _VIDEOSTREAM = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=192,
-  serialized_end=349,
+  serialized_start=194,
+  serialized_end=351,
   methods=[
   _descriptor.MethodDescriptor(
     name='ImgStreaming',
@@ -345,8 +345,8 @@ _CHATSERVER = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=351,
-  serialized_end=421,
+  serialized_start=353,
+  serialized_end=423,
   methods=[
   _descriptor.MethodDescriptor(
     name='ChatStream',
@@ -372,5 +372,41 @@ _CHATSERVER = _descriptor.ServiceDescriptor(
 _sym_db.RegisterServiceDescriptor(_CHATSERVER)
 
 DESCRIPTOR.services_by_name['ChatServer'] = _CHATSERVER
+
+
+_AUDIOSTREAM = _descriptor.ServiceDescriptor(
+  name='AudioStream',
+  full_name='AudioStream',
+  file=DESCRIPTOR,
+  index=2,
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_start=425,
+  serialized_end=519,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='ChunkStreaming',
+    full_name='AudioStream.ChunkStreaming',
+    index=0,
+    containing_service=None,
+    input_type=_MSGREQUEST,
+    output_type=_EMPTY,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='ChunkGetting',
+    full_name='AudioStream.ChunkGetting',
+    index=1,
+    containing_service=None,
+    input_type=_IDENTITY,
+    output_type=_MSGREPLY,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_AUDIOSTREAM)
+
+DESCRIPTOR.services_by_name['AudioStream'] = _AUDIOSTREAM
 
 # @@protoc_insertion_point(module_scope)

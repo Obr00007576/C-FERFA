@@ -257,3 +257,97 @@ class ChatServer(object):
             network__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class AudioStreamStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.ChunkStreaming = channel.unary_unary(
+                '/AudioStream/ChunkStreaming',
+                request_serializer=network__pb2.MsgRequest.SerializeToString,
+                response_deserializer=network__pb2.Empty.FromString,
+                )
+        self.ChunkGetting = channel.unary_unary(
+                '/AudioStream/ChunkGetting',
+                request_serializer=network__pb2.Identity.SerializeToString,
+                response_deserializer=network__pb2.MsgReply.FromString,
+                )
+
+
+class AudioStreamServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def ChunkStreaming(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ChunkGetting(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_AudioStreamServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'ChunkStreaming': grpc.unary_unary_rpc_method_handler(
+                    servicer.ChunkStreaming,
+                    request_deserializer=network__pb2.MsgRequest.FromString,
+                    response_serializer=network__pb2.Empty.SerializeToString,
+            ),
+            'ChunkGetting': grpc.unary_unary_rpc_method_handler(
+                    servicer.ChunkGetting,
+                    request_deserializer=network__pb2.Identity.FromString,
+                    response_serializer=network__pb2.MsgReply.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'AudioStream', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class AudioStream(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def ChunkStreaming(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AudioStream/ChunkStreaming',
+            network__pb2.MsgRequest.SerializeToString,
+            network__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ChunkGetting(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AudioStream/ChunkGetting',
+            network__pb2.Identity.SerializeToString,
+            network__pb2.MsgReply.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

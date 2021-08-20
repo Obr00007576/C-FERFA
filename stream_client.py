@@ -13,48 +13,59 @@ from tkinter import *
 from fer import FER
 import operator
 import time
+import pyaudio
+import audioop
+
 default_image = cv2.imread('./default.png', 0)
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+CHUNK = 4096
+
 class StreamClient:
     def __init__(self, button, target, name) -> None:
         self.URL="a.mp4"
         self.name=name
         self.button=button
         self.stopStreaming=True
-        self.imgSendingThread=None
         self.userSet=set()
         self.imgGettingThread={}
+        self.chunkGettingThread={}
         self.__ui_set()
         self.__connect_server(target)
         threading.Thread(target=self.__register,daemon=True).start()
         threading.Thread(target=self.__checklist,daemon=True).start()
     def __connect_server(self, target):
         channel = grpc.insecure_channel(target)
-        self.conn=network_pb2_grpc.VideoStreamStub(channel)
+        self.vconn=network_pb2_grpc.VideoStreamStub(channel)
+        self.aconn=network_pb2_grpc.AudioStreamStub(channel)
         self.channel=channel
     def __ui_set(self):
         self.button.configure(command=self.__onButtonClick)
     def __register(self):
-        self.conn.Register(network_pb2.Identity(name=self.name))
+        self.vconn.Register(network_pb2.Identity(name=self.name))
     def __checklist(self):
         while True:
-            name_list=self.conn.CheckList(network_pb2.Empty()).name
+            name_list=self.vconn.CheckList(network_pb2.Empty()).name
             tempSet=set(name_list.split("."))
             for uname in tempSet.difference(self.userSet):
-                self.imgGettingThread[uname]=threading.Thread(target=self.__gettingimg,args=(uname,),daemon=True)
+                self.imgGettingThread[uname]=threading.Thread(target=self.__gettingImg,args=(uname,),daemon=True)
                 self.imgGettingThread[uname].start()
+                if self.name!=uname:
+                    self.chunkGettingThread[uname]=threading.Thread(target=self.__gettingChunk,args=(uname,),daemon=True)
+                    self.chunkGettingThread[uname].start()
             for uname in self.userSet.difference(tempSet):
-                t=self.imgGettingThread[uname]
                 del self.imgGettingThread[uname]
-                t.join()
+                del self.chunkGettingThread[uname]
             self.userSet=tempSet
             time.sleep(0.2)
-    def __gettingimg(self, name):
+    def __gettingImg(self, name):
         detector = FER(mtcnn=True)
         while(name in self.imgGettingThread.keys()):
-            response=self.conn.ImgGetting(network_pb2.Identity(name=name))
+            response=self.vconn.ImgGetting(network_pb2.Identity(name=name))
             frame=None
-            if response.img!=bytes("","utf-8"):
-                frame=np.frombuffer(response.img,np.byte)
+            if response.data!=bytes("","utf-8"):
+                frame=np.frombuffer(response.data,np.byte)
                 frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
                 face_list=detector.detect_emotions(frame)
                 if len(face_list)!=0:
@@ -68,14 +79,35 @@ class StreamClient:
                 frame=default_image
             cv2.imshow(response.name, frame)
             cv2.waitKey (15)
+    def __gettingChunk(self, name):
+        audio = pyaudio.PyAudio()
+        playing_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, frames_per_buffer=CHUNK)
+        while(name in self.chunkGettingThread.keys()):
+            response=self.aconn.ChunkGetting(network_pb2.Identity(name=name))
+            chunk=response.data
+            if chunk!=bytes("","utf-8"):
+                playing_stream.write(chunk)
+        playing_stream.close()
+
     def __onButtonClick(self):
         self.stopStreaming=not self.stopStreaming
         if not self.stopStreaming:
-            self.imgSendingThread=threading.Thread(target=self.__sendingImg,daemon=True)
-            self.imgSendingThread.start()
+            threading.Thread(target=self.__sendingImg,daemon=True).start()
+            threading.Thread(target=self.__sendingChunk,daemon=True).start()
         else:
             frame = cv2.imencode(".jpg", default_image)[1].tobytes()
-            self.conn.ImgStreaming(network_pb2.MsgRequest(img=frame,name=self.name))
+            self.vconn.ImgStreaming(network_pb2.MsgRequest(data=frame,name=self.name))
+    def __sendingChunk(self):
+        audio = pyaudio.PyAudio()
+        recodrding_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+        while(True):
+            chunk=recodrding_stream.read(CHUNK)
+            chunk=audioop.mul(chunk,2,0.2)
+            self.aconn.ChunkStreaming(network_pb2.MsgRequest(data=chunk,name=self.name))
+            if self.stopStreaming:
+                break
+        self.aconn.ChunkStreaming(network_pb2.MsgRequest(data=bytes("","utf-8"),name=self.name))
+        recodrding_stream.close()
     def __sendingImg(self):
         """
         cap = cv2.VideoCapture(0)
@@ -85,7 +117,7 @@ class StreamClient:
             ret, frame = cap.read()
             frame = cv2.cvtColor( frame, cv2.IMREAD_COLOR )
             frame = cv2.imencode(".jpg", frame)[1].tobytes()
-            conn.ImgStreaming(network_pb2.MsgRequest(img=frame,name=self.name))
+            conn.ImgStreaming(network_pb2.MsgRequest(data=frame,name=self.name))
             time.sleep(0.025)
             if self.stopStreaming:
                 break
@@ -95,7 +127,7 @@ class StreamClient:
         for frame in vid:
             frame = cv2.cvtColor( frame, cv2.IMREAD_COLOR )
             frame = cv2.imencode(".jpg", frame)[1].tobytes()
-            self.conn.ImgStreaming(network_pb2.MsgRequest(img=frame,name=self.name))
+            self.vconn.ImgStreaming(network_pb2.MsgRequest(data=frame,name=self.name))
             time.sleep(0.04)
             if self.stopStreaming:
                 break

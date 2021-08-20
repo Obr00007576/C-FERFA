@@ -2,9 +2,6 @@ from concurrent import futures
 import grpc
 import network_pb2
 import network_pb2_grpc
-import PIL.Image
-import base64
-import io
 import time
 
 chats=[]
