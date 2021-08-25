@@ -15,6 +15,7 @@ import operator
 import time
 import pyaudio
 import audioop
+from mtcnn.mtcnn import MTCNN
 
 default_image = cv2.imread('./default.png', 0)
 FORMAT = pyaudio.paInt16
